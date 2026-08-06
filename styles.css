@@ -1,0 +1,37 @@
+input{
+
+    width:300px;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+
+}
+
+button{
+
+    padding:10px 18px;
+    margin-left:10px;
+
+    background:#0176d3;
+    color:white;
+
+    border:none;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#015fb2;
+
+}
+
+hr{
+
+    margin-top:25px;
+    margin-bottom:25px;
+
+}
