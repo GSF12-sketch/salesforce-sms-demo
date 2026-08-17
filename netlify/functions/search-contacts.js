@@ -107,7 +107,7 @@ exports.handler = async function (event) {
       .replace(/'/g, "\\'");
 
     const soql =
-      `SELECT Id, FirstName, LastName, Email, Phone, MobilePhone ` +
+      `SELECT Id, FirstName, LastName, Email, MobilePhone ` +
       `FROM Contact ` +
       `WHERE FirstName LIKE '${safeSearchTerm}%' ` +
       `ORDER BY FirstName ` +
