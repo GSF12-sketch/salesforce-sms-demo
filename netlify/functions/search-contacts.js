@@ -91,13 +91,14 @@ exports.handler = async function (event) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          error: "Salesforce did not return an access token or instance URL."
+          error:
+            "Salesforce did not return an access token or instance URL."
         })
       };
     }
 
     // ---------------------------------------------
-    // STEP 2: Search ONLY FirstName
+    // STEP 2: Search Contacts by FirstName
     // ---------------------------------------------
 
     // Escape apostrophes and backslashes
@@ -106,7 +107,7 @@ exports.handler = async function (event) {
       .replace(/'/g, "\\'");
 
     const soql =
-      `SELECT Id, FirstName, LastName, Email, Phone ` +
+      `SELECT Id, FirstName, LastName, Email, Phone, MobilePhone ` +
       `FROM Contact ` +
       `WHERE FirstName LIKE '${safeSearchTerm}%' ` +
       `ORDER BY FirstName ` +
