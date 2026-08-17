@@ -1,6 +1,6 @@
 exports.handler = async function (event) {
   try {
-    // Allow only POST requests
+    // Only allow POST requests
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
@@ -13,7 +13,7 @@ exports.handler = async function (event) {
       };
     }
 
-    // Read the search term sent from app.js
+    // Get the search term from app.js
     const body = JSON.parse(event.body || "{}");
     const searchTerm = (body.searchTerm || "").trim();
 
@@ -24,12 +24,12 @@ exports.handler = async function (event) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          error: "Please enter a Contact name."
+          error: "Please enter a First Name."
         })
       };
     }
 
-    // Get Salesforce environment variables
+    // Salesforce environment variables
     const clientId = process.env.SF_CLIENT_ID;
     const clientSecret = process.env.SF_CLIENT_SECRET;
     const loginUrl =
@@ -48,9 +48,9 @@ exports.handler = async function (event) {
       };
     }
 
-    // --------------------------------------------------
-    // STEP 1: Get Salesforce access token
-    // --------------------------------------------------
+    // ---------------------------------------------
+    // STEP 1: Authenticate with Salesforce
+    // ---------------------------------------------
 
     const tokenUrl = `${loginUrl}/services/oauth2/token`;
 
@@ -82,23 +82,35 @@ exports.handler = async function (event) {
     }
 
     const accessToken = tokenData.access_token;
-    const instanceUrl = tokenData.instance_url || loginUrl;
+    const instanceUrl = tokenData.instance_url;
 
-    // --------------------------------------------------
-    // STEP 2: Search Salesforce Contacts
-    // --------------------------------------------------
+    if (!accessToken || !instanceUrl) {
+      return {
+        statusCode: 500,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          error: "Salesforce did not return an access token or instance URL."
+        })
+      };
+    }
 
-    // Escape characters that could interfere with the SOQL string
-    const safeSearchTerm = searchTerm.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    // ---------------------------------------------
+    // STEP 2: Search ONLY FirstName
+    // ---------------------------------------------
 
-    const soql = `
-      SELECT Id, FirstName, LastName, Email, Phone
-      FROM Contact
-      WHERE FirstName LIKE '%${safeSearchTerm}%'
-         OR LastName LIKE '%${safeSearchTerm}%'
-      ORDER BY LastName, FirstName
-      LIMIT 20
-    `;
+    // Escape apostrophes and backslashes
+    const safeSearchTerm = searchTerm
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+
+    const soql =
+      `SELECT Id, FirstName, LastName, Email, Phone ` +
+      `FROM Contact ` +
+      `WHERE FirstName LIKE '${safeSearchTerm}%' ` +
+      `ORDER BY FirstName ` +
+      `LIMIT 20`;
 
     const queryUrl =
       `${instanceUrl}/services/data/v67.0/query/?q=${encodeURIComponent(soql)}`;
@@ -113,6 +125,10 @@ exports.handler = async function (event) {
 
     const queryData = await queryResponse.json();
 
+    // ---------------------------------------------
+    // STEP 3: Handle Salesforce query errors
+    // ---------------------------------------------
+
     if (!queryResponse.ok) {
       return {
         statusCode: queryResponse.status,
@@ -126,15 +142,14 @@ exports.handler = async function (event) {
       };
     }
 
-    // --------------------------------------------------
-    // STEP 3: Return Contacts to the webpage
-    // --------------------------------------------------
+    // ---------------------------------------------
+    // STEP 4: Return Contacts
+    // ---------------------------------------------
 
     return {
       statusCode: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         success: true,
