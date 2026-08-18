@@ -210,7 +210,7 @@ document
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            to: mobilePhone,
+            phone: mobilePhone,
             message: message,
             contactId: contactId
           })
