@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>My First Web Page</title>
+    <title>SMS Portal</title>
 
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,31 +11,56 @@
 
 <div class="container">
 
-<h1>SMS Portal</h1>
+    <h1>SMS Portal</h1>
 
-<p>Search for a Salesforce Contact and send an SMS.</p>
+    <p>Search for a Salesforce Contact and send an SMS.</p>
 
-<hr>
+    <hr>
 
-<h3>Search Contact</h3>
+    <h3>Search Contact</h3>
 
-<input
-    type="text"
-    id="searchBox"
-    placeholder="Enter Contact Name">
+    <input
+        type="text"
+        id="searchBox"
+        placeholder="Enter Contact Name">
 
-<button id="searchButton">
-    Search
-</button>
+    <button id="searchButton">
+        Search
+    </button>
 
-<div id="results">
+    <div id="results">
+    </div>
+
+    <!-- SMS Section -->
+    <div id="smsSection" style="display: none;">
+
+        <hr>
+
+        <h3>Send SMS</h3>
+
+        <p>
+            <strong>Mobile:</strong>
+            <span id="selectedMobile"></span>
+        </p>
+
+        <textarea
+            id="messageBox"
+            rows="5"
+            placeholder="Type your message here..."></textarea>
+
+        <br><br>
+
+        <button id="sendSmsButton">
+            Send SMS
+        </button>
+
+        <p id="smsStatus"></p>
+
+    </div>
 
 </div>
-    
 
-</div>
 <script src="app.js"></script>
-
 
 </body>
 
