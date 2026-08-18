@@ -78,7 +78,7 @@ document
             </p>
 
             <p>
-              Phone: ${contact.Phone || "No phone"}
+              Phone: ${contact.MobilePhone || "No phone"}
             </p>
           </div>
 
